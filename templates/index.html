@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        #messages {
+            border: 1px solid #ccc;
+            height: 400px;
+            overflow-y: scroll;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        #inputArea {
+            display: flex;
+            gap: 10px;
+        }
+        #inputArea input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #inputArea button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #inputArea button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 5px 0;
+        }
+        .error {
+            color: red;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat Application</h1>
+    <div id="messages"></div>
+    <div id="error" class="error"></div>
+    <div id="inputArea">
+        <input id="messageInput" type="text" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        const apiUrl = '/chat';
+        const errorDiv = document.getElementById('error');
+
+        async function fetchMessages() {
+            try {
+                const response = await fetch(`${apiUrl}/history`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch messages');
+                }
+                const messages = await response.json();
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML = '';
+                messages.forEach(msg => {
+                    const message = document.createElement('div');
+                    message.className = 'message';
+                    message.textContent = `${msg.user}: ${msg.message}`;
+                    messagesDiv.appendChild(message);
+                });
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                errorDiv.textContent = '';
+            } catch (error) {
+                errorDiv.textContent = 'Error loading messages. Please try again.';
+                console.error('Error:', error);
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (message) {
+                try {
+                    const response = await fetch(`${apiUrl}/message`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message }),
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to send message');
+                    }
+                    input.value = '';
+                    await fetchMessages();
+                    errorDiv.textContent = '';
+                } catch (error) {
+                    errorDiv.textContent = 'Error sending message. Please try again.';
+                    console.error('Error:', error);
+                }
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Fetch initial messages
+        fetchMessages();
+    </script>
+</body>
+</html>
