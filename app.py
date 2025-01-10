@@ -1,13 +1,12 @@
 from flask import Flask, request, jsonify, render_template, Response
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
-# from openai import OpenAI
 from typing import List
 
 import logging
 import os
-import random
 
+from ai.dummy_ai import DummyAI
 from message import Message
 
 # Initialize Flask app
@@ -30,51 +29,7 @@ app.config['DEBUG'] = os.getenv('DEBUG', 'False').lower() == 'true'
 messages: List[Message] = []
 
 # AI response configurations
-DUMMY_RESPONSES = [
-    "Hi there! I'm a simulated AI assistant.",
-    "Hello! This is a placeholder AI response.",
-    "I'm just a dummy function pretending to be AI.",
-    "That's an interesting point! Let me think about it...",
-    "I understand what you're saying. Please tell me more!"
-]
-
-
-def get_ai_response(user_message: str) -> str:
-    """
-    Get AI response for user message. Currently uses dummy responses,
-    but could be replaced with real LLM API call in production.
-
-    Args:
-        user_message: The message from the user
-
-    Returns:
-        str: AI response message
-    """
-    # Example of how we'd integrate with a real LLM in production:
-    # try:
-    #     client = OpenAI(
-    #         api_key=os.environ.get("OPENAI_API_KEY"),
-    #     )
-    #
-    #     response = client.chat.completions.create(
-    #         messages=[
-    #             {
-    #                 "role": "user",
-    #                 "content": user_message
-    #             }
-    #         ],
-    #         model="gpt-4o-mini",
-    #     )
-    #
-    #     return response.choices[0].message.content
-    #
-    # except Exception as e:
-    #     logger.error(f"Error calling LLM API: {str(e)}")
-    #     return "I apologize, but I'm having trouble processing your request."
-
-    logger.info(f"Generating AI response for: {user_message}")
-    return random.choice(DUMMY_RESPONSES)
-
+ai = DummyAI()
 
 @app.route('/')
 def home() -> (Response, int):
@@ -115,7 +70,7 @@ def send_message() -> (Response, int):
         ))
 
         # Get and store AI response
-        ai_response = get_ai_response(user_message)
+        ai_response = ai.get_ai_response(user_message)
         messages.append(Message(
             user="AI",
             message=ai_response,
@@ -135,7 +90,11 @@ def send_message() -> (Response, int):
 
 @app.route('/chat/history', methods=['GET'])
 def get_history() -> (Response, int):
-    """Retrieve chat history"""
+    """ Retrieve chat history
+
+    :return:
+        The response containing the chat history
+    """
     try:
         return jsonify([msg.to_dict() for msg in messages]), 200
     except Exception as e:
