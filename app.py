@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify, render_template, Response
 from datetime import datetime
-import logging
-import random
-from typing import Dict, List, Optional
-from dataclasses import dataclass, asdict
-import os
 from logging.handlers import RotatingFileHandler
-import json
+# from openai import OpenAI
+from typing import List
+
+import logging
+import os
+import random
+
+from message import Message
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -22,22 +24,6 @@ logger.addHandler(handler)
 # In production, these would be environment variables
 app.config['MAX_MESSAGES'] = int(os.getenv('MAX_MESSAGES', '100'))
 app.config['DEBUG'] = os.getenv('DEBUG', 'False').lower() == 'true'
-
-
-@dataclass
-class Message:
-    """Data class for chat messages"""
-    user: str
-    message: str
-    timestamp: datetime
-
-    def to_dict(self) -> Dict:
-        """Convert message to dictionary format"""
-        return {
-            'user': self.user,
-            'message': self.message,
-            'timestamp': self.timestamp.isoformat()
-        }
 
 
 # In-memory storage for messages
@@ -66,11 +52,22 @@ def get_ai_response(user_message: str) -> str:
     """
     # Example of how we'd integrate with a real LLM in production:
     # try:
-    #     response = openai.ChatCompletion.create(
-    #         model="gpt-3.5-turbo",
-    #         messages=[{"role": "user", "content": user_message}]
+    #     client = OpenAI(
+    #         api_key=os.environ.get("OPENAI_API_KEY"),
     #     )
+    #
+    #     response = client.chat.completions.create(
+    #         messages=[
+    #             {
+    #                 "role": "user",
+    #                 "content": user_message
+    #             }
+    #         ],
+    #         model="gpt-4o-mini",
+    #     )
+    #
     #     return response.choices[0].message.content
+    #
     # except Exception as e:
     #     logger.error(f"Error calling LLM API: {str(e)}")
     #     return "I apologize, but I'm having trouble processing your request."
@@ -80,7 +77,7 @@ def get_ai_response(user_message: str) -> str:
 
 
 @app.route('/')
-def home() -> Response:
+def home() -> (Response, int):
     """Serve the chat interface"""
     try:
         return render_template('index.html')
@@ -90,7 +87,7 @@ def home() -> Response:
 
 
 @app.route('/chat/message', methods=['POST'])
-def send_message() -> Response:
+def send_message() -> (Response, int):
     """
     Handle incoming chat messages
 
@@ -137,7 +134,7 @@ def send_message() -> Response:
 
 
 @app.route('/chat/history', methods=['GET'])
-def get_history() -> Response:
+def get_history() -> (Response, int):
     """Retrieve chat history"""
     try:
         return jsonify([msg.to_dict() for msg in messages]), 200
