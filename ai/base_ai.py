@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
-class AI(ABC):
+class AIModel(ABC):
+    """Classes that defines an interface for communicating with AI models"""
+
     @abstractmethod
     def get_ai_response(self, user_message: str) -> str:
         """

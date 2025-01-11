@@ -7,18 +7,20 @@ import logging
 import os
 
 from ai.dummy_ai import DummyAI
-from message import Message
+from ai.gpt_4o_mini import GPT4oMini
+from models.message import Message
+
 
 # Initialize Flask app
 app = Flask(__name__)
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 handler = RotatingFileHandler('chat_app.log', maxBytes=10000, backupCount=3)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
+
 
 # In production, these would be environment variables
 app.config['MAX_MESSAGES'] = int(os.getenv('MAX_MESSAGES', '100'))
@@ -43,6 +45,7 @@ def home() -> (Response, int):
 
 @app.route('/chat/message', methods=['POST'])
 def send_message() -> (Response, int):
+
     """
     Handle incoming chat messages
 
@@ -96,7 +99,7 @@ def get_history() -> (Response, int):
         The response containing the chat history
     """
     try:
-        return jsonify([msg.to_dict() for msg in messages]), 200
+        return jsonify([dict(msg) for msg in messages]), 200
     except Exception as e:
         logger.error(f"Error retrieving chat history: {str(e)}")
         return jsonify({'error': 'Error retrieving chat history'}), 500

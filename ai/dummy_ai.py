@@ -1,6 +1,6 @@
 import random
 
-from ai.base_ai import AI
+from ai.base_ai import AIModel
 
 DUMMY_RESPONSES = [
     "Hi there! I'm a simulated AI assistant.",
@@ -10,7 +10,9 @@ DUMMY_RESPONSES = [
     "I understand what you're saying. Please tell me more!"
 ]
 
-class DummyAI(AI):
+class DummyAI(AIModel):
+    """Wrapper class that implements a dummy AI model"""
+
     def get_ai_response(self, user_message: str) -> str:
         """
         Get AI response for user message. Currently uses dummy responses,
