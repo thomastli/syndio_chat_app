@@ -1,7 +1,10 @@
-import pytest
 from app import app, messages
-from datetime import datetime
+
 import json
+import pytest
+
+from config.constants import StatusCodes
+
 
 @pytest.fixture
 def client():
@@ -12,14 +15,15 @@ def client():
 def test_home_page(client):
     """Test that home page loads successfully"""
     response = client.get('/')
-    assert response.status_code == 200
+    assert response.status_code == StatusCodes.SUCCESS_CODE
 
 def test_send_message(client):
     """Test sending a valid message"""
     response = client.post('/chat/message',
                          json={'message': 'Hello AI!'},
                          content_type='application/json')
-    assert response.status_code == 200
+    assert response.status_code == StatusCodes.SUCCESS_CODE
+
     data = json.loads(response.data)
     assert data['status'] == 'success'
 
@@ -28,7 +32,7 @@ def test_send_invalid_message(client):
     response = client.post('/chat/message',
                          json={},
                          content_type='application/json')
-    assert response.status_code == 400
+    assert response.status_code == StatusCodes.BAD_REQUEST_ERROR_CODE
 
 def test_get_history(client):
     """Test retrieving chat history"""
@@ -39,7 +43,8 @@ def test_get_history(client):
     
     # Then get history
     response = client.get('/chat/history')
-    assert response.status_code == 200
+    assert response.status_code == StatusCodes.SUCCESS_CODE
+
     data = json.loads(response.data)
     assert len(data) > 0
     assert isinstance(data, list)
@@ -52,7 +57,7 @@ def test_empty_message(client):
     response = client.post('/chat/message',
                          json={'message': '   '},
                          content_type='application/json')
-    assert response.status_code == 400
+    assert response.status_code == StatusCodes.BAD_REQUEST_ERROR_CODE
 
 def test_message_limit(client):
     """Test that message limit is enforced"""

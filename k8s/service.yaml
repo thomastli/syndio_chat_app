@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-app-service
+spec:
+  type: NodePort  # Changed to NodePort for Minikube
+  selector:
+    app: chat-app
+  ports:
+  - port: 5000
+    targetPort: 5000

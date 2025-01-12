@@ -4,7 +4,7 @@ class AIModel(ABC):
     """Classes that defines an interface for communicating with AI models"""
 
     @abstractmethod
-    def get_ai_response(self, user_message: str) -> str:
+    def get_ai_response(self, user_message: str) -> str: # pragma: no cover
         """
         Get response from AI for a user message.
 

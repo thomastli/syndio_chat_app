@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chat-app-config
+data:
+  MAX_MESSAGES: "100"
+  DEBUG: "False"
