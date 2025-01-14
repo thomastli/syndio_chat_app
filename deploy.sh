@@ -18,12 +18,11 @@ kubectl create secret generic chat-app-secrets \
 
 # Apply Kubernetes manifests
 kubectl apply -f k8s/configmap.ymal
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/app_deployment.yaml
+kubectl apply -f k8s/app_service.yaml
+kubectl apply -f k8s/mongodb_deployment.yaml
+kubectl apply -f k8s/mongodb_service.yaml
 kubectl apply -f k8s/hpa.yaml
-
-# Get the URL to access the application
-minikube service chat-app-service --url
 
 # Display pod status
 echo "Pod Status:"
@@ -36,3 +35,6 @@ kubectl get services
 # Display HPA status
 echo "HPA Status:"
 kubectl get hpa
+
+# Get the URL to access the application
+minikube service chat-app-service --url

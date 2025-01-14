@@ -12,8 +12,7 @@ class GPT4oMini(AIModel):
 
     def get_ai_response(self, user_message: str) -> str:
         """
-        Get AI response for user message. Currently uses dummy responses,
-        but could be replaced with real LLM API call in production.
+        Get AI response for user message.
 
         Args:
             user_message: The message from the user

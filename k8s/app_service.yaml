@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: chat-app-service
 spec:
-  type: NodePort  # Changed to NodePort for Minikube
+  type: NodePort # Changed to NodePort for Minikube
   selector:
     app: chat-app
   ports:

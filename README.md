@@ -40,16 +40,20 @@ See [Kubernetes Deployment Plan](docs/kubernetes_deployment.md)
   - [X] Describe how you would implement tools like Splunk or Datadog in comments or placeholder functions
 - [X] Implement a docker build and Kubernetes deployment:
   - [X] Include Dockerfile to build/run your app
-  - [X] Description of how to deploy the app to a Kubernetes cluster
+  - [X] Describe a Kubernetes deployment plan for the app
 - [X] Include basic unit and integration tests
 - [X] Add GitHUb Actions workflow for CI/CD (linting, testing, and building applications)
 - [X] Write an API contract for the chat app including the following:
   - [X] API Endpoints
   - [X] HTTP Methods used by each endpoint
-  - [X] Sample request bodies (in JSON)
+  - [X] Request body examples (in JSON)
   - [X] HTTP Response Codes 
-  - [X] Sample response bodies (in JSON)
+  - [X] Response body examples (in JSON)
 
 ### Optional
-- [ ] Integrate either a local SQL or NoSQL database for chat history
+- [X] Integrate either a local SQL or NoSQL database for chat history
+  - [X] Implement a local MongoDB database using `flask-pymongo`
+  - [X] Create a Docker Compose `yaml` configuration to define multiple containers for the Flask app and MongoDB instance
+  - [X] Update GitHub Actions build stage to use `docker compose` instead of `docker build`
+  - [X] Update Kubernetes deployment plan to include deployment and services manifests for the MongoDB instance
 - [ ] Extend the provided frontend or create a React/Vue component for the REST API.

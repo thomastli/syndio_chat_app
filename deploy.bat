@@ -25,13 +25,11 @@ kubectl create secret generic chat-app-secrets --from-literal=openai-api-key="YO
 :: Apply Kubernetes manifests
 echo Applying Kubernetes manifests...
 kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/app_deployment.yaml
+kubectl apply -f k8s/app_service.yaml
+kubectl apply -f k8s/mongodb_deployment.yaml
+kubectl apply -f k8s/mongodb_service.yaml
 kubectl apply -f k8s/hpa.yaml
-
-:: Get the URL to access the application
-echo Getting service URL...
-minikube service chat-app-service --url
 
 :: Display pod status
 echo:
@@ -47,5 +45,9 @@ kubectl get services
 echo:
 echo HPA Status:
 kubectl get hpa
+
+:: Get the URL to access the application
+echo Getting service URL...
+minikube service chat-app-service --url
 
 ENDLOCAL
