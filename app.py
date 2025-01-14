@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template, Response
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
@@ -12,8 +13,13 @@ from config.constants import AppConfig, Constants, Environment, StatusCodes
 from db.mongo_db import MongoDb
 from models.message import Message
 
+load_dotenv()
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://mongodb:27017/chat_app")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
 # Initialize Flask app
 app = Flask(__name__)
+app.config['MONGO_URI'] = MONGO_URI
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,8 +38,6 @@ ai = DummyAI()
 
 # Database configuration
 db = MongoDb(app)
-db.clear_messages()
-
 
 def clean_mongo_id(data):
     """Convert MongoDB ObjectId to string for JSON serialization"""

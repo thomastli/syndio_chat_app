@@ -10,15 +10,10 @@ source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 pip install -r requirements.txt
 ```
 
-Run the Flask application:
+Then, build and start the application via `docker compose`:
 ```bash
-flask --app flask-chat-app run
-```
-
-Or using Docker:
-```bash
-docker build -t chat-app .
-docker run -p 5000:5000 chat-app
+docker compose build
+docker compose up -d
 ```
 
 ## API Contract

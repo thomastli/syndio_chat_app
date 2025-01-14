@@ -17,7 +17,7 @@ kubectl create secret generic chat-app-secrets \
   --from-literal=openai-api-key="YOUR_API_KEY"
 
 # Apply Kubernetes manifests
-kubectl apply -f k8s/configmap.ymal
+kubectl apply -f k8s/configmap.yaml
 kubectl apply -f k8s/app_deployment.yaml
 kubectl apply -f k8s/app_service.yaml
 kubectl apply -f k8s/mongodb_deployment.yaml

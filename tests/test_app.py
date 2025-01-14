@@ -9,6 +9,7 @@ from config.constants import StatusCodes
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
+    app.config['MONGO_URI'] = 'mongodb://localhost:27017'
 
     with app.test_client() as client:
         yield client

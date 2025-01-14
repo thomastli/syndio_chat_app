@@ -6,7 +6,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MONGO_URI=mongodb://mongodb:27017/chat_app
+      - MONGO_URI=${MONGO_URI}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - DEBUG=False
       - MAX_MESSAGES=100
@@ -27,8 +27,6 @@ services:
     image: mongo:8
     ports:
       - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
     networks:
       - chat-network
     restart: unless-stopped
@@ -42,6 +40,3 @@ services:
 networks:
   chat-network:
     driver: bridge
-
-volumes:
-  mongodb_data:
