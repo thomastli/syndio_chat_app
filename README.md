@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/gh/thomastli/syndio_assignment/graph/badge.svg?token=BbIsm1rnoz)](https://codecov.io/gh/thomastli/syndio_assignment)
 
-## Instructions
+## Usage
 Create a `.env` file to set the following environment variables:
 
 ```bash

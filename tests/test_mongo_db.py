@@ -6,7 +6,7 @@ from flask import Flask
 from pymongo.collection import Collection
 from pymongo.results import InsertOneResult, DeleteResult
 
-from config.constants import Constants
+from config.constants import Constants, EnvironmentVariables
 from db.mongo_db import MongoDb
 from models.message import Message
 
@@ -22,10 +22,8 @@ def app():
 def mock_mongo(app):
     """Create a mock MongoDB instance"""
     with patch('db.mongo_db.PyMongo') as mock_pymongo:
-        # Create mock collection
         mock_collection = MagicMock(spec=Collection)
-        
-        # Setup the mock mongo instance
+
         mock_instance = mock_pymongo.return_value
         mock_instance.db.messages = mock_collection
         
@@ -37,48 +35,40 @@ def mock_mongo(app):
 def test_insert_message_success(mock_mongo):
     """Test successful message insertion"""
     db, mock_collection = mock_mongo
-    
-    # Create a test message
+
     test_message = Message(
         user="test_user",
         message="test message",
         timestamp=datetime.now()
     )
-    
-    # Setup mock return value
+
     mock_collection.insert_one.return_value = InsertOneResult(
         inserted_id='test_id',
         acknowledged=True
     )
-    
-    # Test insertion
+
     result = db.insert_message(test_message)
-    
-    # Verify results
+
     assert result is True
     mock_collection.insert_one.assert_called_once_with(dict(test_message))
 
 def test_insert_message_failure(mock_mongo):
     """Test failed message insertion"""
     db, mock_collection = mock_mongo
-    
-    # Create a test message
+
     test_message = Message(
         user="test_user",
         message="test message",
         timestamp=datetime.now()
     )
-    
+
     # Setup mock return value for failure
     mock_collection.insert_one.return_value = InsertOneResult(
         inserted_id='test_id',
         acknowledged=False
     )
-    
-    # Test insertion
+
     result = db.insert_message(test_message)
-    
-    # Verify results
     assert result is False
     mock_collection.insert_one.assert_called_once_with(dict(test_message))
 
@@ -88,19 +78,16 @@ def test_retrieve_messages_empty(mock_mongo):
     
     # Setup mock return value
     mock_collection.find.return_value = []
-    
-    # Test retrieval
+
     messages = db.retrieve_messages()
-    
-    # Verify results
+
     assert messages == []
     mock_collection.find.assert_called_once_with()
 
 def test_retrieve_messages_with_data(mock_mongo):
     """Test retrieving messages when messages exist"""
     db, mock_collection = mock_mongo
-    
-    # Create test messages
+
     test_messages = [
         {
             Constants.USER_FIELD: "user1",
@@ -116,11 +103,9 @@ def test_retrieve_messages_with_data(mock_mongo):
     
     # Setup mock return value
     mock_collection.find.return_value = test_messages
-    
-    # Test retrieval
+
     messages = db.retrieve_messages()
-    
-    # Verify results
+
     assert messages == test_messages
     assert len(messages) == 2
     mock_collection.find.assert_called_once_with()
@@ -129,10 +114,8 @@ def test_clear_messages(mock_mongo):
     """Test clearing all messages"""
     db, mock_collection = mock_mongo
 
-    # Test clearing messages
     db.clear_messages()
 
-    # Verify results
     mock_collection.drop.assert_called_once_with()
 
 @pytest.mark.integration
@@ -141,7 +124,7 @@ def test_mongodb_integration(app):
     import os
     
     # Skip if no MongoDB URI is provided
-    mongodb_uri = os.getenv("MONGO_URI")
+    mongodb_uri = os.getenv(EnvironmentVariables.MONGO_URI_VARIABLE)
     if not mongodb_uri:
         pytest.skip("No MONGO_URI environment variable found")
     

@@ -4,7 +4,7 @@ from enum import Enum, IntEnum, StrEnum
 class AppConfig(Enum):
     APP_HOST = "0.0.0.0"
     APP_PORT = 5000
-    MAX_MESSAGE_LIMIT = "100"
+    MAX_MESSAGES = "100"
 
 class Constants(StrEnum):
     CONTENT_FIELD = "content"
@@ -17,7 +17,9 @@ class Constants(StrEnum):
     TIMESTAMP_FIELD = "timestamp"
     USER_FIELD = "user"
 
-class Environment(StrEnum):
+class EnvironmentVariables(StrEnum):
+    DEBUG_VARIABLE = "DEBUG"
+    MAX_MESSAGES_VARIABLE = "MAX_MESSAGES"
     MONGO_URI_VARIABLE = "MONGO_URI"
     OPENAI_API_KEY_VARIABLE = "OPEN_AI_API_KEY"
     PORT_VARIABLE = "PORT"

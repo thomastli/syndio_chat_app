@@ -1,0 +1,12 @@
+coverage:
+  status:
+    project:
+      default:   # default is the status check's name, not default settings
+        target: auto
+        threshold: 5
+        paths:
+          - "!tests/"
+       # advanced settings
+        branches:
+          - main
+        if_ci_failed: error #success, failure, error, ignore

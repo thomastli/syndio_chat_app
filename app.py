@@ -1,5 +1,3 @@
-import traceback
-
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template, Response
 from datetime import datetime
@@ -8,25 +6,25 @@ import os
 
 from ai.dummy_ai import DummyAI
 # from ai.gpt_4o_mini import GPT4oMini
-from config.constants import AppConfig, Constants, Environment, StatusCodes
+from config.constants import AppConfig, Constants, EnvironmentVariables, StatusCodes
 from db.mongo_db import MongoDb
 from models.message import Message
 from utils.log_utils import configure_logger
 from utils.message_utils import clean_mongo_id
 
 load_dotenv()
-MONGO_URI = os.environ.get(Environment.MONGO_URI_VARIABLE, "mongodb://mongodb:27017/chat_app")
-OPENAI_API_KEY = os.environ.get(Environment.OPENAI_API_KEY_VARIABLE)
+MONGO_URI = os.environ.get(EnvironmentVariables.MONGO_URI_VARIABLE, "mongodb://mongodb:27017/chat_app")
+OPENAI_API_KEY = os.environ.get(EnvironmentVariables.OPENAI_API_KEY_VARIABLE)
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config[Environment.MONGO_URI_VARIABLE] = MONGO_URI
+app.config[EnvironmentVariables.MONGO_URI_VARIABLE] = MONGO_URI
 
 logger = configure_logger()
 
 # In production, these would be environment variables
-app.config['MAX_MESSAGES'] = int(os.getenv('MAX_MESSAGES', AppConfig.MAX_MESSAGE_LIMIT.value))
-app.config['DEBUG'] = os.getenv('DEBUG', 'False').lower() == 'true'
+app.config['MAX_MESSAGES'] = int(os.getenv(EnvironmentVariables.MAX_MESSAGES_VARIABLE, AppConfig.MAX_MESSAGES.value))
+app.config['DEBUG'] = os.getenv(EnvironmentVariables.DEBUG_VARIABLE, 'False').lower() == 'true'
 
 # AI response using dummy AI model
 ai = DummyAI()
@@ -183,5 +181,5 @@ def get_history() -> (Response, int):
 
 
 if __name__ == '__main__':
-    port = int(os.getenv(Environment.PORT_VARIABLE, AppConfig.APP_PORT.value))
+    port = int(os.getenv(EnvironmentVariables.PORT_VARIABLE, AppConfig.APP_PORT.value))
     app.run(host=AppConfig.APP_HOST.value, port=port)
