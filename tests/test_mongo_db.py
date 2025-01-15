@@ -6,6 +6,7 @@ from flask import Flask
 from pymongo.collection import Collection
 from pymongo.results import InsertOneResult, DeleteResult
 
+from config.constants import Constants
 from db.mongo_db import MongoDb
 from models.message import Message
 
@@ -102,14 +103,14 @@ def test_retrieve_messages_with_data(mock_mongo):
     # Create test messages
     test_messages = [
         {
-            "user": "user1",
-            "message": "message1",
-            "timestamp": datetime.now()
+            Constants.USER_FIELD: "user1",
+            Constants.MESSAGE_FIELD: "message1",
+            Constants.TIMESTAMP_FIELD: datetime.now()
         },
         {
-            "user": "user2",
-            "message": "message2",
-            "timestamp": datetime.now()
+            Constants.USER_FIELD: "user2",
+            Constants.MESSAGE_FIELD: "message2",
+            Constants.TIMESTAMP_FIELD: datetime.now()
         }
     ]
     
@@ -165,8 +166,8 @@ def test_mongodb_integration(app):
     # Test retrieve
     messages = db.retrieve_messages()
     assert len(messages) == 1
-    assert messages[0]["user"] == "integration_test_user"
-    assert messages[0]["message"] == "integration test message"
+    assert messages[0][Constants.USER_FIELD] == "integration_test_user"
+    assert messages[0][Constants.MESSAGE_FIELD] == "integration test message"
     
     # Test clear
     db.clear_messages()

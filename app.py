@@ -1,10 +1,9 @@
+import traceback
+
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template, Response
 from datetime import datetime
-from logging.handlers import RotatingFileHandler
-from typing import List
 
-import logging
 import os
 
 from ai.dummy_ai import DummyAI
@@ -12,53 +11,56 @@ from ai.dummy_ai import DummyAI
 from config.constants import AppConfig, Constants, Environment, StatusCodes
 from db.mongo_db import MongoDb
 from models.message import Message
+from utils.log_utils import configure_logger
+from utils.message_utils import clean_mongo_id
 
 load_dotenv()
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb://mongodb:27017/chat_app")
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+MONGO_URI = os.environ.get(Environment.MONGO_URI_VARIABLE, "mongodb://mongodb:27017/chat_app")
+OPENAI_API_KEY = os.environ.get(Environment.OPENAI_API_KEY_VARIABLE)
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config['MONGO_URI'] = MONGO_URI
+app.config[Environment.MONGO_URI_VARIABLE] = MONGO_URI
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-handler = RotatingFileHandler('chat_app.log', maxBytes=10000, backupCount=3)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+logger = configure_logger()
 
 # In production, these would be environment variables
 app.config['MAX_MESSAGES'] = int(os.getenv('MAX_MESSAGES', AppConfig.MAX_MESSAGE_LIMIT.value))
 app.config['DEBUG'] = os.getenv('DEBUG', 'False').lower() == 'true'
 
-# AI response configurations
+# AI response using dummy AI model
 ai = DummyAI()
+# AI responses using GPT 4o-mini model
 # ai = GPT4oMini()
 
 # Database configuration
 db = MongoDb(app)
-
-def clean_mongo_id(data):
-    """Convert MongoDB ObjectId to string for JSON serialization"""
-    if isinstance(data, list):
-        return [clean_mongo_id(item) for item in data]
-    if isinstance(data, dict):
-        data_cleaned = data.copy()
-        if '_id' in data_cleaned:
-            data_cleaned['_id'] = str(data_cleaned['_id'])
-        return data_cleaned
-    return data
 
 
 @app.route('/')
 def home() -> (Response, int):
     """Serve the chat interface"""
     try:
+        # Splunk logging:
+        # logger.info('Home page accessed', extra={
+        #     'event_type': 'page_access',
+        #     'endpoint': '/',
+        #     'client_ip': request.remote_addr,
+        #     'user_agent': request.user_agent.string
+        # })
+        logger.info('Retrieved home page')
         return render_template('index.html')
     except Exception as e:
+        # Splunk logging:
+        # logger.error('Home page error', extra={
+        #     'event_type': 'error',
+        #     'endpoint': '/',
+        #     'error_message': str(e),
+        #     'client_ip': request.remote_addr,
+        #     'stack_trace': traceback.format_exc()
+        # })
         logger.error(f"Error serving home page: {str(e)}")
-        return jsonify({'error': 'Internal server error'}), StatusCodes.INTERNAL_SERVER_ERROR_CODE
+        return jsonify({Constants.ERROR_FIELD: 'Internal server error'}), StatusCodes.INTERNAL_SERVER_ERROR_CODE
 
 
 @app.route('/chat/message', methods=['POST'])
@@ -68,19 +70,36 @@ def send_message() -> (Response, int):
 
     Expected request body:
     {
-        "message": "User's message here"
+        "user": "User",
+        "message": "User's message here",
+        "timestamp":
     }
     """
     try:
         data = request.get_json()
 
         if not data or Constants.MESSAGE_FIELD not in data:
+            # Splunk logging:
+            # logger.warning('Invalid message format', extra={
+            #     'event_type': 'validation_error',
+            #     'endpoint': '/chat/message',
+            #     'client_ip': request.remote_addr,
+            #     'request_data': data
+            # })
             logger.warning("Invalid message format received")
-            return jsonify({'error': 'Invalid request format'}), StatusCodes.BAD_REQUEST_ERROR_CODE
+            return jsonify({Constants.ERROR_FIELD: 'Invalid request format'}), StatusCodes.BAD_REQUEST_ERROR_CODE
 
         user_message = data[Constants.MESSAGE_FIELD].strip()
         if not user_message:
-            return jsonify({'error': 'Message cannot be empty'}), StatusCodes.BAD_REQUEST_ERROR_CODE
+            # Splunk logging:
+            # logger.warning('Message cannot be empty', extra={
+            #     'event_type': 'validation_error',
+            #     'endpoint': '/chat/message',
+            #     'client_ip': request.remote_addr,
+            #     'request_data': data
+            # })
+            logger.warning("Message cannot be empty")
+            return jsonify({Constants.ERROR_FIELD: 'Message cannot be empty'}), StatusCodes.BAD_REQUEST_ERROR_CODE
 
         # Store user message
         user_msg = Message(
@@ -89,6 +108,17 @@ def send_message() -> (Response, int):
             timestamp=datetime.now()
         )
         db.insert_message(user_msg)
+        # Splunk logging:
+        # logger.info('User message received', extra={
+        #     'event_type': 'user_message',
+        #     'endpoint': '/chat/message',
+        #     'user': user_msg.user,
+        #     'message_length': len(user_msg.message),
+        #     'timestamp': user_msg.timestamp.isoformat(),
+        #     'client_ip': request.remote_addr
+        # })
+        logger.info(
+            f"Message from user: {user_msg.user}, message = {user_msg.message}, timestamp = {user_msg.timestamp}")
 
         # Get and store AI response
         ai_response = ai.get_ai_response(user_message)
@@ -98,6 +128,16 @@ def send_message() -> (Response, int):
             timestamp=datetime.now()
         )
         db.insert_message(ai_msg)
+        # Splunk logging:
+        # logger.info('AI response generated', extra={
+        #     'event_type': 'ai_response',
+        #     'endpoint': '/chat/message',
+        #     'response_length': len(ai_response),
+        #     'processing_time': (datetime.now() - user_msg.timestamp).total_seconds(),
+        #     'timestamp': ai_msg.timestamp.isoformat()
+        # })
+        logger.info(
+            f"Message from user: {ai_msg.user}, message = {ai_msg.message}, timestamp = {ai_msg.timestamp}")
 
         # Maintain message limit
         # while len(messages) > app.config['MAX_MESSAGES']:
@@ -120,11 +160,28 @@ def get_history() -> (Response, int):
     try:
         messages = db.retrieve_messages()
         cleaned_messages = clean_mongo_id(messages)
+        # Splunk logging:
+        # logger.info('Chat history retrieved', extra={
+        #     'event_type': 'history_retrieval',
+        #     'endpoint': '/chat/history',
+        #     'message_count': len(cleaned_messages),
+        #     'client_ip': request.remote_addr
+        # })
+        logger.info(f"Retrieved {len(cleaned_messages)} chat messages from history")
         return jsonify(cleaned_messages), StatusCodes.SUCCESS_CODE
     except Exception as e:
+        # Splunk logging:
+        # logger.error('Chat history retrieval error', extra={
+        #     'event_type': 'error',
+        #     'endpoint': '/chat/history',
+        #     'error_message': str(e),
+        #     'client_ip': request.remote_addr,
+        #     'stack_trace': traceback.format_exc()
+        # })
         logger.error(f"Error retrieving chat history: {str(e)}")
-        return jsonify({'error': 'Error retrieving chat history'}), StatusCodes.INTERNAL_SERVER_ERROR_CODE
+        return jsonify({Constants.ERROR_FIELD: 'Error retrieving chat history'}), StatusCodes.INTERNAL_SERVER_ERROR_CODE
 
 
 if __name__ == '__main__':
-    app.run(host=AppConfig.APP_HOST.value, port=int(os.getenv(Environment.PORT_VARIABLE, AppConfig.APP_PORT.value)))
+    port = int(os.getenv(Environment.PORT_VARIABLE, AppConfig.APP_PORT.value))
+    app.run(host=AppConfig.APP_HOST.value, port=port)

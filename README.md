@@ -2,6 +2,14 @@
 
 [![codecov](https://codecov.io/gh/thomastli/syndio_assignment/graph/badge.svg?token=BbIsm1rnoz)](https://codecov.io/gh/thomastli/syndio_assignment)
 
+## Instructions
+Create a `.env` file to set the following environment variables:
+
+```bash
+MONGO_URI="mongodb://mongodb:27017/chat_app" # default URI
+OPENAI_API_KEY="your-openai-api-key"
+```
+
 Create a virtual environment and install dependencies:
 
 ```bash
@@ -10,7 +18,7 @@ source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 pip install -r requirements.txt
 ```
 
-Then, build and start the application via `docker compose`:
+Build and start the application via `docker compose`:
 ```bash
 docker compose build
 docker compose up -d

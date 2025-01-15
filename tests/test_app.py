@@ -3,11 +3,12 @@ from app import app
 import json
 import pytest
 
-from config.constants import StatusCodes
+from config.constants import StatusCodes, Constants
 
 
 @pytest.fixture
 def client():
+    """Defines a Flask test client fixture"""
     app.config['TESTING'] = True
     app.config['MONGO_URI'] = 'mongodb://localhost:27017'
 
@@ -27,7 +28,7 @@ def test_send_message(client):
     assert response.status_code == StatusCodes.SUCCESS_CODE
 
     data = json.loads(response.data)
-    assert data['status'] == 'success'
+    assert data[Constants.STATUS_FIELD] == 'success'
 
 def test_send_invalid_message(client):
     """Test sending an invalid message"""
@@ -50,9 +51,9 @@ def test_get_history(client):
     data = json.loads(response.data)
     assert len(data) > 0
     assert isinstance(data, list)
-    assert 'message' in data[0]
-    assert 'user' in data[0]
-    assert 'timestamp' in data[0]
+    assert Constants.MESSAGE_FIELD in data[0]
+    assert Constants.USER_FIELD in data[0]
+    assert Constants.TIMESTAMP_FIELD in data[0]
 
 def test_empty_message(client):
     """Test sending empty message"""

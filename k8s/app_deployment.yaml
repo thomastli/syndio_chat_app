@@ -20,7 +20,7 @@ spec:
         - containerPort: 5000
         env:
           - name: MONGO_URI
-            value: "mongodb://mongodb:27017/chat_app"
+            value: ${MONGO_URI}
         resources:
           requests:
             memory: "64Mi"   # Reduced for Minikube

@@ -179,7 +179,7 @@ spec:
 Specifications: 
 - Creates a Service named `mongo`
 - Maps port `27017` to the same port on all the pods
-- Uses selector `app: mongosb` to match the pods created by the deployment
+- Uses selector `app: mongodb` to match the pods created by the deployment
 - Creates a `ClusterIP` type service
 
 Notes:
@@ -190,7 +190,7 @@ Notes:
 
 ## Deployment Script
 
-The deployment script (`deploy.sh`/`deploy.bat`) automates the entire deployment process:
+The deployment script (`sample_deploy.sh`/`sample_deploy.bat`) automates the entire deployment process:
 
 1. Environment Setup:
    - Starts `Minikube` cluster

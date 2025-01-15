@@ -3,6 +3,8 @@ import logging
 import pytest
 from unittest.mock import MagicMock
 from ai.gpt_4o_mini import GPT4oMini
+from config.constants import Constants
+
 
 @pytest.fixture
 def ai():
@@ -41,8 +43,8 @@ def test_get_ai_response_success(ai, mock_openai):
     mock_openai.chat.completions.create.assert_called_once_with(
         messages=[
             {
-                "role": "user",
-                "content": "Test message"
+                Constants.ROLE_FIELD: "user",
+                Constants.CONTENT_FIELD: "Test message"
             }
         ],
         model="gpt-4o-mini",

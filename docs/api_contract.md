@@ -107,10 +107,10 @@
 ```
 
 ## Notes
-1. The application maintains a configurable message limit (default: 100 messages)
+1. The application maintains a configurable message limit (default: `100` messages)
 2. All timestamps are in ISO format with microsecond precision
 3. Empty messages are not accepted
-4. The API uses JSON for all request and response bodies
+4. The API uses JSON for all requests and response bodies
 5. All error responses follow the same structure with an "error" field containing the error message
 6. The AI responses are currently limited to a predefined set of dummy responses in development, but in production would use the GPT-4o Mini model
 7. The User field in messages will always be either "User" or "AI"

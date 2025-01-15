@@ -4,6 +4,7 @@ import logging
 import os
 
 from ai.base_ai import AIModel
+from config.constants import Environment, Constants
 
 logger = logging.getLogger(__name__)
 
@@ -22,14 +23,14 @@ class GPT4oMini(AIModel):
         """
         try:
             client = OpenAI(
-                api_key=os.environ.get("OPENAI_API_KEY"),
+                api_key=os.environ.get(Environment.OPENAI_API_KEY_VARIABLE),
             )
 
             response = client.chat.completions.create(
                 messages=[
                     {
-                        "role": "user",
-                        "content": user_message
+                        Constants.ROLE_FIELD: "user",
+                        Constants.CONTENT_FIELD: user_message
                     }
                 ],
                 model="gpt-4o-mini",
