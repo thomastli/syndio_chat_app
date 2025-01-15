@@ -15,7 +15,7 @@ class DummyAI(AIModel):
 
     def get_ai_response(self, user_message: str) -> str:
         """
-        Get AI response for user message. Currently uses dummy responses,
+        Get AI response for user message. Uses dummy responses,
         but could be replaced with real LLM API call in production.
 
         Args:

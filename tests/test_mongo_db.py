@@ -15,7 +15,6 @@ def app():
     """Create a Flask test app"""
     app = Flask(__name__)
     app.config['TESTING'] = True
-    app.config['MONGO_URI'] = 'mongodb://localhost:27017'
     return app
 
 @pytest.fixture

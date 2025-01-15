@@ -6,8 +6,8 @@
 Create a `.env` file to set the following environment variables:
 
 ```bash
-MONGO_URI="mongodb://mongodb:27017/chat_app" # default URI
-OPENAI_API_KEY="your-openai-api-key"
+MONGO_URI=mongodb://mongodb:27017/chat_app # default URI
+OPENAI_API_KEY=your-openai-api-key
 ```
 
 Create a virtual environment and install dependencies:

@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template, Response
-from datetime import datetime
+from datetime import datetime, timezone
 
 import os
 
@@ -13,7 +13,7 @@ from utils.log_utils import configure_logger
 from utils.message_utils import clean_mongo_id
 
 load_dotenv()
-MONGO_URI = os.environ.get(EnvironmentVariables.MONGO_URI_VARIABLE, "mongodb://mongodb:27017/chat_app")
+MONGO_URI = os.environ.get(EnvironmentVariables.MONGO_URI_VARIABLE)
 OPENAI_API_KEY = os.environ.get(EnvironmentVariables.OPENAI_API_KEY_VARIABLE)
 
 # Initialize Flask app
@@ -103,7 +103,7 @@ def send_message() -> (Response, int):
         user_msg = Message(
             user="User",
             message=user_message,
-            timestamp=datetime.now()
+            timestamp=datetime.now(tz=timezone.utc)
         )
         db.insert_message(user_msg)
         # Splunk logging:
@@ -123,7 +123,7 @@ def send_message() -> (Response, int):
         ai_msg = Message(
             user="AI",
             message=ai_response,
-            timestamp=datetime.now()
+            timestamp=datetime.now(tz=timezone.utc)
         )
         db.insert_message(ai_msg)
         # Splunk logging:
@@ -138,8 +138,13 @@ def send_message() -> (Response, int):
             f"Message from user: {ai_msg.user}, message = {ai_msg.message}, timestamp = {ai_msg.timestamp}")
 
         # Maintain message limit
-        # while len(messages) > app.config['MAX_MESSAGES']:
-        #     messages.pop(0)
+        total_messages = db.count_messages()
+        if total_messages > app.config['MAX_MESSAGES']:
+            nth_newest = db.get_nth_newest()
+            if nth_newest.count:
+                cutoff_timestamp = nth_newest[0][Constants.TIMESTAMP_FIELD]
+                print(cutoff_timestamp)
+                db.delete_messages_by_timestamp(cutoff_timestamp)
 
         return jsonify({Constants.STATUS_FIELD: 'success'}), StatusCodes.SUCCESS_CODE
 

@@ -11,17 +11,15 @@ eval $(minikube docker-env)
 # Build the Docker image in Minikube's environment
 docker build -t chat-app:latest .
 
-# Create secret for OpenAI API key
-# Replace YOUR_API_KEY with your actual OpenAI API key
-kubectl create secret generic chat-app-secrets \
-  --from-literal=openai-api-key="YOUR_API_KEY"
+# Create secrets from environment variable
+kubectl create secret generic chat-app-secrets --from-env-file=.env
 
 # Apply Kubernetes manifests
 kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/app_deployment.yaml
-kubectl apply -f k8s/app_service.yaml
-kubectl apply -f k8s/mongodb_deployment.yaml
-kubectl apply -f k8s/mongodb_service.yaml
+kubectl apply -f k8s/app-deployment.yaml
+kubectl apply -f k8s/app-service.yaml
+kubectl apply -f k8s/mongodb-deployment.yaml
+kubectl apply -f k8s/mongodb-service.yaml
 kubectl apply -f k8s/hpa.yaml
 
 # Display pod status

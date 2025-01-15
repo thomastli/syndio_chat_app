@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: chat-app
 spec:
-  replicas: 1 # Reduced for Minikube environment
+  replicas: 2 # Reduced for Minikube environment
   selector:
     matchLabels:
       app: chat-app
@@ -15,12 +15,20 @@ spec:
       containers:
       - name: chat-app
         image: chat-app:latest
+        env:
+          - name: MONGO_URI
+            valueFrom:
+              secretKeyRef:
+                name: chat-app-secrets
+                key: MONGO_URI
+          - name: OPENAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: chat-app-secrets
+                key: OPENAI_API_KEY
         imagePullPolicy: Never
         ports:
         - containerPort: 5000
-        env:
-          - name: MONGO_URI
-            value: ${MONGO_URI}
         resources:
           requests:
             memory: "64Mi"   # Reduced for Minikube
