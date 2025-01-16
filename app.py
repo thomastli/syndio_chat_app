@@ -196,5 +196,8 @@ def get_history() -> (Response, int):
 
 
 if __name__ == '__main__':
+    # Retrieve the app host and port from: (1) environment variables; (2) the app config in constants.py
+    host = os.getenv(EnvironmentVariables.APP_HOST_VARIABLE, AppConfig.APP_HOST.value)
     port = int(os.getenv(EnvironmentVariables.PORT_VARIABLE, AppConfig.APP_PORT.value))
-    app.run(host=AppConfig.APP_HOST.value, port=port)
+
+    app.run(host=host, port=port)

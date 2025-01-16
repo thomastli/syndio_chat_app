@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.12'
         cache: 'pip'
 
     - name: Install dependencies
@@ -34,6 +34,7 @@ jobs:
 
     - name: Test with pytest
       env:
+        APP_HOST: ${{ secrets.APP_HOST }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         MONGO_URI: ${{ secrets.MONGO_URI }}
       run: |
@@ -60,6 +61,7 @@ jobs:
 
     - name: Run Docker Compose and Test App
       env:
+        APP_HOST: ${{ secrets.APP_HOST }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         MONGO_URI: ${{ secrets.MONGO_URI }}
       run: |

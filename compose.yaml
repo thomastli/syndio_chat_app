@@ -4,6 +4,7 @@ services:
     ports:
       - "5000:5000"
     environment:
+      - APP_HOST=${APP_HOST}
       - MONGO_URI=${MONGO_URI}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - DEBUG=False

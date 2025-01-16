@@ -1,7 +1,10 @@
+import logging
 from logging.handlers import RotatingFileHandler
+
+
 # from splunk_handler import SplunkHandler
 
-import logging
+
 # import os
 
 
@@ -28,7 +31,6 @@ def configure_logger() -> logging.Logger:
     # splunk_handler.setLevel(logging.INFO)
     # logger.addHandler(splunk_handler)
     # return logger
-
 
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)

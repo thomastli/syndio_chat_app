@@ -1,14 +1,18 @@
-# syndio_assignment
+# syndio_chat_app
 
-[![codecov](https://codecov.io/gh/thomastli/syndio_assignment/graph/badge.svg?token=BbIsm1rnoz)](https://codecov.io/gh/thomastli/syndio_assignment)
+[![codecov](https://codecov.io/gh/thomastli/syndio_chat_app/graph/badge.svg?token=BbIsm1rnoz)](https://codecov.io/gh/thomastli/syndio_chat_app) [![CodeFactor](https://www.codefactor.io/repository/github/thomastli/syndio_chat_app/badge)](https://www.codefactor.io/repository/github/thomastli/syndio_chat_app)
+
+Simple Flask-based, real-time chat app that uses an AI model to return responses to the user.
 
 ## Usage
 
 Create an `.env` file to set the following environment variables:
 
 ```bash
-MONGO_URI=mongodb://mongodb:27017/chat_app # default URI
-OPENAI_API_KEY=your-openai-api-key
+APP_HOST=127.0.0.1 # Optional, uses default value in constants.py otherwise
+APP_PORT=5000 # Optional, uses default value in constants.py otherwise
+MONGO_URI=mongodb://mongodb:27017/chat_app # Required 
+OPENAI_API_KEY=your-openai-api-key # Required
 ```
 
 Create a virtual environment and install dependencies:

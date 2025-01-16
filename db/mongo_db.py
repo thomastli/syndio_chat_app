@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import Flask
 from flask_pymongo import PyMongo
 
-from config.constants import Constants, AppConfig
+from config.constants import Constants
 from db.base_db import BaseDb
 from models.message import Message
 

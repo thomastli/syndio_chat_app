@@ -2,7 +2,14 @@ from config.constants import Constants
 
 
 def remove_mongo_id(data):
-    """Remove MongoDB ObjectId from messages for JSON serialization"""
+    """ (Recursively) Removes MongoDB ObjectId from messages for JSON serialization
+
+    Args:
+        data: The data to be converted (message or list of messages)
+
+    Returns:
+        The message or list of messages with no _id field
+    """
     if isinstance(data, list):
         return [remove_mongo_id(item) for item in data]
     if isinstance(data, dict):

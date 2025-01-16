@@ -16,6 +16,11 @@ spec:
       - name: chat-app
         image: chat-app:latest
         env:
+          - name: APP_HOST
+            valueFrom:
+              secretKeyRef:
+                name: chat-app-secrets
+                key: APP_HOST
           - name: MONGO_URI
             valueFrom:
               secretKeyRef:

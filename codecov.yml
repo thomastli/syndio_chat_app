@@ -10,3 +10,9 @@ coverage:
         branches:
           - main
         if_ci_failed: error #success, failure, error, ignore
+    patch:
+      default:
+        # basic
+        target: 80%
+        threshold: 1%
+        base: auto

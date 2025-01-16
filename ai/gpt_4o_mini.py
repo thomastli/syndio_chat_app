@@ -1,17 +1,18 @@
-from openai import OpenAI
-
 import logging
 import os
 
-# For splunk logging:
-# import traceback
+from openai import OpenAI
 
 from ai.base_ai import AIModel
 from config.constants import EnvironmentVariables, Constants
 
+# For splunk logging:
+# import traceback
+
 OPENAI_API_KEY = os.environ.get(EnvironmentVariables.OPENAI_API_KEY_VARIABLE)
 
 logger = logging.getLogger(__name__)
+
 
 class GPT4oMini(AIModel):
     """Wrapper class that implements support for the GPT-4o Mini model"""
@@ -24,7 +25,7 @@ class GPT4oMini(AIModel):
             user_message: The message from the user
 
         Returns:
-            str: AI response message
+            The AI response message
         """
         try:
 

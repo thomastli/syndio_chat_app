@@ -13,19 +13,21 @@ DUMMY_RESPONSES = [
     "I understand what you're saying. Please tell me more!"
 ]
 
+
 class DummyAI(AIModel):
     """Wrapper class that implements a dummy AI model"""
 
     def get_ai_response(self, user_message: str) -> str:
         """
-        Get AI response for user message. Uses dummy responses,
-        but could be replaced with real LLM API call in production.
+        Get AI response for user message.
+
+        Uses randomized dummy responses.
 
         Args:
             user_message: The message from the user
 
         Returns:
-            str: AI response message
+            The AI response message
         """
         # See ai/gpt_40_mini.py for an example of how to implement an AI response with a real LLM
 

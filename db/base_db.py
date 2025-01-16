@@ -6,7 +6,7 @@ from models.message import Message
 
 class BaseDb(ABC):
     @abstractmethod
-    def insert_message(self, message: Message) -> bool: # pragma: no cover
+    def insert_message(self, message: Message) -> bool:  # pragma: no cover
         """Insert a message into the database.
 
         Args:
@@ -18,7 +18,7 @@ class BaseDb(ABC):
         pass
 
     @abstractmethod
-    def retrieve_messages(self) -> list: # pragma: no cover
+    def retrieve_messages(self) -> list:  # pragma: no cover
         """ Retrieve all messages from the database.
 
         Returns:
@@ -27,12 +27,12 @@ class BaseDb(ABC):
         pass
 
     @abstractmethod
-    def clear_messages(self): # pragma: no cover
+    def clear_messages(self):  # pragma: no cover
         """Clear all messages from the database."""
         pass
 
     @abstractmethod
-    def count_messages(self) -> int: # pragma: no cover
+    def count_messages(self) -> int:  # pragma: no cover
         """Counts the number of messages in the database.
 
         Returns:
@@ -41,7 +41,7 @@ class BaseDb(ABC):
         pass
 
     @abstractmethod
-    def get_nth_newest(self) -> list: # pragma: no cover
+    def get_nth_newest(self) -> list:  # pragma: no cover
         """Get the nth newest message in the database.
 
         Returns:
@@ -50,7 +50,7 @@ class BaseDb(ABC):
         pass
 
     @abstractmethod
-    def delete_messages_by_timestamp(self, timestamp: datetime): # pragma: no cover
+    def delete_messages_by_timestamp(self, timestamp: datetime):  # pragma: no cover
         """Delete all messages from the database before a given cutoff timestamp.
 
         Args:

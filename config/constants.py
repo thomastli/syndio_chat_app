@@ -3,9 +3,10 @@ from enum import Enum, IntEnum, StrEnum
 
 class AppConfig(Enum):
     """Defines Flask application related configuration constants"""
-    APP_HOST = "0.0.0.0"
+    APP_HOST = "127.0.0.1"
     APP_PORT = 5000
     MAX_MESSAGES = "100"
+
 
 class Constants(StrEnum):
     """Defines field constants"""
@@ -24,13 +25,16 @@ class Constants(StrEnum):
     TIMESTAMP_FIELD = "timestamp"
     USER_FIELD = "user"
 
+
 class EnvironmentVariables(StrEnum):
     """Defines environment variable name constants"""
+    APP_HOST_VARIABLE = "APP_HOST"
     DEBUG_VARIABLE = "DEBUG"
     MAX_MESSAGES_VARIABLE = "MAX_MESSAGES"
     MONGO_URI_VARIABLE = "MONGO_URI"
     OPENAI_API_KEY_VARIABLE = "OPEN_AI_API_KEY"
     PORT_VARIABLE = "PORT"
+
 
 class StatusCodes(IntEnum):
     """Defines request status codes as constants"""

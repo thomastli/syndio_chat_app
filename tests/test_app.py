@@ -1,8 +1,8 @@
-from app import app, db
-
 import json
+
 import pytest
 
+from app import app, db
 from config.constants import StatusCodes, Constants
 
 
@@ -14,27 +14,31 @@ def client():
     with app.test_client() as client:
         yield client
 
+
 def test_home_page(client):
     """Test that home page loads successfully"""
     response = client.get('/')
     assert response.status_code == StatusCodes.SUCCESS_CODE
 
+
 def test_send_message(client):
     """Test sending a valid message"""
     response = client.post('/chat/message',
-                         json={'message': 'Hello AI!'},
-                         content_type='application/json')
+                           json={'message': 'Hello AI!'},
+                           content_type='application/json')
     assert response.status_code == StatusCodes.SUCCESS_CODE
 
     data = json.loads(response.data)
     assert data[Constants.STATUS_FIELD] == 'success'
 
+
 def test_send_invalid_message(client):
     """Test sending an invalid message"""
     response = client.post('/chat/message',
-                         json={},
-                         content_type='application/json')
+                           json={},
+                           content_type='application/json')
     assert response.status_code == StatusCodes.BAD_REQUEST_ERROR_CODE
+
 
 def test_get_history(client):
     """Test retrieving chat history"""
@@ -42,7 +46,7 @@ def test_get_history(client):
     client.post('/chat/message',
                 json={'message': 'Test message'},
                 content_type='application/json')
-    
+
     # Then get history
     response = client.get('/chat/history')
     assert response.status_code == StatusCodes.SUCCESS_CODE
@@ -54,12 +58,14 @@ def test_get_history(client):
     assert Constants.USER_FIELD in data[0]
     assert Constants.TIMESTAMP_FIELD in data[0]
 
+
 def test_empty_message(client):
     """Test sending empty message"""
     response = client.post('/chat/message',
-                         json={'message': '   '},
-                         content_type='application/json')
+                           json={'message': '   '},
+                           content_type='application/json')
     assert response.status_code == StatusCodes.BAD_REQUEST_ERROR_CODE
+
 
 def test_message_limit(client):
     """Test that message limit is enforced"""
@@ -69,8 +75,8 @@ def test_message_limit(client):
     # Send more than MAX_MESSAGES messages
     for i in range(app.config[Constants.MAX_MESSAGES_FIELD] + 5):
         client.post('/chat/message',
-                   json={'message': f'Test message {i}'},
-                   content_type='application/json')
+                    json={'message': f'Test message {i}'},
+                    content_type='application/json')
 
     response = client.get('/chat/history')
     data = json.loads(response.data)
