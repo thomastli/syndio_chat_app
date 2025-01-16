@@ -1,6 +1,9 @@
+import logging
 import random
 
 from ai.base_ai import AIModel
+
+logger = logging.getLogger(__name__)
 
 DUMMY_RESPONSES = [
     "Hi there! I'm a simulated AI assistant.",
@@ -25,4 +28,13 @@ class DummyAI(AIModel):
             str: AI response message
         """
         # See ai/gpt_40_mini.py for an example of how to implement an AI response with a real LLM
+
+        # Splunk logging:
+        # logger.info('AI request', extra={
+        #     'event_type': 'ai_call',
+        #     'component': 'ai',
+        #     'ai_model': 'dummy',
+        #     'user_message': user_message
+        # })
+        logger.info(f"Generating AI response for message: {user_message}")
         return random.choice(DUMMY_RESPONSES)

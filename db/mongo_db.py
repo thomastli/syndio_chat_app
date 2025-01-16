@@ -3,10 +3,9 @@ from datetime import datetime
 from flask import Flask
 from flask_pymongo import PyMongo
 
-from config.constants import Constants
+from config.constants import Constants, AppConfig
 from db.base_db import BaseDb
 from models.message import Message
-
 
 
 class MongoDb(BaseDb):
@@ -37,7 +36,7 @@ class MongoDb(BaseDb):
         result = self.db.messages.insert_one(dict(message))
         return result.acknowledged
 
-    def retrieve_messages(self) -> list:
+    def retrieve_messages(self) -> list[dict]:
         """Retrieves all messages from the database.
 
         Returns:
@@ -58,13 +57,15 @@ class MongoDb(BaseDb):
         """
         return self.db.messages.count_documents({})
 
-    def get_nth_newest(self) -> list:
+    def get_nth_newest(self) -> list[dict]:
         """Get the nth newest message in the database.
 
         Returns:
             The nth newest message
         """
-        docs = self.db.messages.find().sort(Constants.TIMESTAMP_FIELD, -1).skip(self.app.config['MAX_MESSAGES']).limit(1)
+        docs = self.db.messages.find().sort(Constants.TIMESTAMP_FIELD, -1).skip(
+            self.app.config[Constants.MAX_MESSAGES_FIELD]).limit(1)
+
         return list(docs)
 
     def delete_messages_by_timestamp(self, timestamp: datetime):

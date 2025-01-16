@@ -32,7 +32,7 @@ class BaseDb(ABC):
         pass
 
     @abstractmethod
-    def count_messages(self) -> int:
+    def count_messages(self) -> int: # pragma: no cover
         """Counts the number of messages in the database.
 
         Returns:
@@ -41,7 +41,7 @@ class BaseDb(ABC):
         pass
 
     @abstractmethod
-    def get_nth_newest(self) -> list:
+    def get_nth_newest(self) -> list: # pragma: no cover
         """Get the nth newest message in the database.
 
         Returns:
@@ -50,7 +50,7 @@ class BaseDb(ABC):
         pass
 
     @abstractmethod
-    def delete_messages_by_timestamp(self, timestamp: datetime):
+    def delete_messages_by_timestamp(self, timestamp: datetime): # pragma: no cover
         """Delete all messages from the database before a given cutoff timestamp.
 
         Args:

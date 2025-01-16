@@ -14,7 +14,7 @@ from models.message import Message
 def app():
     """Create a Flask test app"""
     app = Flask(__name__)
-    app.config['TESTING'] = True
+    app.config[Constants.TESTING_FIELD] = True
     return app
 
 @pytest.fixture
@@ -128,7 +128,7 @@ def test_mongodb_integration(app):
         pytest.skip("No MONGO_URI environment variable found")
     
     # Initialize real MongoDB connection
-    app.config["MONGO_URI"] = mongodb_uri
+    app.config[Constants.MONGO_URI_FIELD] = mongodb_uri
     db = MongoDb(app)
     
     # Clear any existing messages

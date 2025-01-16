@@ -9,8 +9,7 @@ from config.constants import StatusCodes, Constants
 @pytest.fixture
 def client():
     """Defines a Flask test client fixture"""
-    app.config['TESTING'] = True
-    app.config['MONGO_URI'] = 'mongodb://localhost:27017'
+    app.config[Constants.TESTING_FIELD] = True
 
     with app.test_client() as client:
         yield client
@@ -68,11 +67,11 @@ def test_message_limit(client):
     db.clear_messages()
 
     # Send more than MAX_MESSAGES messages
-    for i in range(app.config['MAX_MESSAGES'] + 5):
+    for i in range(app.config[Constants.MAX_MESSAGES_FIELD] + 5):
         client.post('/chat/message',
                    json={'message': f'Test message {i}'},
                    content_type='application/json')
 
     response = client.get('/chat/history')
     data = json.loads(response.data)
-    assert len(data) <= app.config['MAX_MESSAGES']
+    assert len(data) <= app.config[Constants.MAX_MESSAGES_FIELD]
