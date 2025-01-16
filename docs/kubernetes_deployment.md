@@ -1,6 +1,6 @@
 # Kubernetes Deployment
 
-The following defines the Kubernetes manifests and a sample deployment script for a `MiniKube` instance.
+The following defines the Kubernetes manifests and a sample deployment script for a `minikube` instance.
 
 ## Manifests
 The `k8s` directory contains the following manifests:
@@ -34,7 +34,7 @@ This configuration sets two application parameters:
 - **Debug mode:** `Disabled`
 
 ### App Deployment
-The `app_deployment.yaml` manifest defines how the application should be deployed and managed within the cluster:
+The `app-deployment.yaml` manifest defines how the application should be deployed and managed within the cluster:
 
 ```yaml
 apiVersion: apps/v1
@@ -196,7 +196,7 @@ Notes:
 
 ## Deployment Script
 
-The deployment script (`sample_deploy.sh`/`sample_deploy.bat`) automates the entire deployment process:
+The deployment script (`deploy.sh`/`deploy.bat`) automates the entire deployment process:
 
 1. Environment Setup:
    - Starts `Minikube` cluster
@@ -205,7 +205,7 @@ The deployment script (`sample_deploy.sh`/`sample_deploy.bat`) automates the ent
 2. Application Build:
    - Builds the `docker image` within Minikube's environment
 3. Secrets Management:
-   - Creates a Kubernetes secret for the OpenAI API key
+   - Creates a Kubernetes secret that contains the OpenAI API key and Mongo URI
 4. Resource Deployment:
    - Applies all Kubernetes manifests in sequence:
      - ConfigMap

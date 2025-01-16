@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template, Response
 from datetime import datetime, timezone
 
+import bleach
 import os
 
 from ai.dummy_ai import DummyAI
@@ -98,11 +99,12 @@ def send_message() -> (Response, int):
             # })
             logger.warning("Message cannot be empty")
             return jsonify({Constants.ERROR_FIELD: 'Message cannot be empty'}), StatusCodes.BAD_REQUEST_ERROR_CODE
+        sanitized_user_message = bleach.clean(user_message)
 
         # Store user message
         user_msg = Message(
             user="User",
-            message=user_message,
+            message=sanitized_user_message,
             timestamp=datetime.now(tz=timezone.utc)
         )
         db.insert_message(user_msg)
@@ -118,11 +120,11 @@ def send_message() -> (Response, int):
         logger.info(
             f"Message from user: {user_msg.user}, message = {user_msg.message}, timestamp = {user_msg.timestamp}")
 
-        # Get and store AI response
         ai_response = ai.get_ai_response(user_message)
+        sanitized_ai_response = bleach.clean(ai_response)
         ai_msg = Message(
             user="AI",
-            message=ai_response,
+            message=sanitized_ai_response,
             timestamp=datetime.now(tz=timezone.utc)
         )
         db.insert_message(ai_msg)
@@ -143,7 +145,6 @@ def send_message() -> (Response, int):
             nth_newest = db.get_nth_newest()
             if nth_newest.count:
                 cutoff_timestamp = nth_newest[0][Constants.TIMESTAMP_FIELD]
-                print(cutoff_timestamp)
                 db.delete_messages_by_timestamp(cutoff_timestamp)
 
         return jsonify({Constants.STATUS_FIELD: 'success'}), StatusCodes.SUCCESS_CODE

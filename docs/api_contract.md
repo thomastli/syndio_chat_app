@@ -2,7 +2,7 @@
 
 ## Endpoints
 
-### 1. Home Page
+### 1. Retrieve Home Page
 **Endpoint:** `/`  
 **HTTP Method:** `GET`  
 **Description:** Serves the chat interface HTML page
@@ -11,7 +11,7 @@
 - `200`: Success - Returns the HTML page
 - `500`: Internal Server Error
 
-**Error Response Body:**
+#### Error Response Body Example
 ```json
 {
     "error": "Internal server error"
@@ -28,52 +28,51 @@
 - `400`: Bad Request (Invalid format or empty message)
 - `500`: Internal Server Error
 
-#### Request Body
+#### Request Body Example
 ```json
 {
     "message": "Hello, how are you today?"
 }
 ```
 
-#### Success Response Body (Example)
+#### Success Response Body Example
 ```json
 {
     "status": "success"
 }
 ```
 
-#### Bad Request Response Body (Examples)
+#### Bad Request Response Body Examples
 ##### Empty Message Request Body
 ```json
 {
     "error": "Message cannot be empty"
 }
 ```
-
-#### Server Error
-```json
-{
-    "error": "Internal server error"
-}
-```
-
-#### Internal Server Error Response Body (Example)
+##### Invalid Request Format Response Body Example
 ```json
 {
     "error": "Invalid request format"
 }
 ```
 
+##### Internal Server Error Response Body Example
+```json
+{
+    "error": "Internal server error"
+}
+```
+
 ### 3. Get Chat History
 **Endpoint:** `/chat/history`  
 **HTTP Method:** `GET`  
-**Description:** Retrieves the chat conversation history
+**Description:** Retrieves the chat history
 
 #### Response Codes
 - `200`: Success
 - `500`: Internal Server Error
 
-#### Success Response Body (Example)
+#### Success Response Body Example
 ```json
 [
     {
@@ -99,18 +98,9 @@
 ]
 ```
 
-#### Error Response Body
+#### Error Response Body Example
 ```json
 {
     "error": "Error retrieving chat history"
 }
 ```
-
-## Notes
-1. The application maintains a configurable message limit (default: `100` messages)
-2. All timestamps are in ISO format with microsecond precision
-3. Empty messages are not accepted
-4. The API uses JSON for all requests and response bodies
-5. All error responses follow the same structure with an "error" field containing the error message
-6. The AI responses are currently limited to a predefined set of dummy responses in development, but in production would use the GPT-4o Mini model
-7. The User field in messages will always be either "User" or "AI"
